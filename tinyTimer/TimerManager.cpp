@@ -66,6 +66,20 @@ ITimer* TimerManager::GetTimer(const std::string& identifier)
 	return nullptr;
 }
 
+void TimerManager::PreUpdate()
+{
+	for(auto it = m_Timers.begin(); it != m_Timers.end(); it++)
+	{
+		if(it->second->ShouldBeDestroyed())
+		{
+			m_Timers.erase(it);
+		}
+	}
+
+	auto simpleIt = std::remove_if(m_SimpleTimers.begin(), m_SimpleTimers.end(), [](SimpleTimer* p) {return p->ShouldBeDestroyed(); });
+	m_SimpleTimers.erase(simpleIt, m_SimpleTimers.end());
+}
+
 void TimerManager::Update(std::chrono::milliseconds dt)
 {
 	for(auto timer : m_Timers)

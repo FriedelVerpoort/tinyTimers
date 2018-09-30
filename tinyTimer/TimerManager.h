@@ -16,6 +16,8 @@ namespace tinyTimer
 
 		bool ExistsTimer(const std::string& identifier);
 		ITimer* GetTimer(const std::string& identifier);
+
+		void PreUpdate();
 		void Update(std::chrono::milliseconds dt);
 
 	private:

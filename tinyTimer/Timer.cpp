@@ -3,7 +3,7 @@
 using namespace tinyTimer;
 
 ITimer::ITimer(std::chrono::milliseconds interval, uint32_t reps, TimerFunctionBasePtr delegate)
-	:m_Interval(interval), m_Delta(0), m_Repititions(reps), m_TotalRepititions(reps), m_TimeDelegate(delegate), m_Paused(false)
+	:m_Interval(interval), m_Delta(0), m_Repititions(reps), m_TotalRepititions(reps), m_TimeDelegate(delegate), m_Paused(false), m_Destroy(false)
 {
 }
 
@@ -90,9 +90,24 @@ uint32_t ITimer::TotalReptitions() const
 	return m_TotalRepititions;
 }
 
+bool ITimer::ShouldBeDestroyed() const
+{
+	return m_Destroy;
+}
+
+void ITimer::SetDestroyed(bool destroy)
+{
+	m_Destroy = destroy;
+}
+
 void ITimer::Update(std::chrono::milliseconds dt)
 {
-	if (m_Repititions == 0) return;
+	if (m_Repititions == 0)
+	{
+		m_Destroy = true;
+		return;
+	}
+
 	m_Delta += dt;
 	if (m_Delta >= m_Interval)
 	{

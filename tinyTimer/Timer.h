@@ -86,6 +86,8 @@ namespace tinyTimer
 
 		std::chrono::milliseconds IntervalTime() const;
 		uint32_t TotalReptitions() const;
+		bool ShouldBeDestroyed() const;
+		void SetDestroyed(bool destroy);
 
 		void Update(std::chrono::milliseconds dt);
 
@@ -97,6 +99,7 @@ namespace tinyTimer
 		std::chrono::milliseconds m_Delta;
 		uint32_t m_Repititions;
 		bool m_Paused;
+		bool m_Destroy;
 	};
 
 	class SimpleTimer : public ITimer
