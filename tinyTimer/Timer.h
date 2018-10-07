@@ -3,14 +3,46 @@
 #include <functional>
 #include <chrono>
 /*Idea's: 
- destroyable timers
-*
 1.templated ITimer for precision
 2.Updates with different inputs
 *
 */
 namespace tinyTimer
 {
+	template<typename ret, typename  retFunc,typename ...args>
+	ret TimeFunction(std::function<retFunc(args...)> f, args ... argList)
+	{
+		ret _time{};
+		std::chrono::time_point<std::chrono::steady_clock> begin = std::chrono::steady_clock::now();
+		f(argList...);
+		std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+		_time = ret(std::chrono::duration_cast<ret>(end - begin).count());
+		return _time;
+	}
+
+	template<typename ret, typename retFunc, typename ...args>
+	std::pair<retFunc, ret> TimeFunctionReturn(std::function<retFunc(args...)> f, args ... argList)
+	{
+		std::pair<retFunc, ret> pair{};
+		//ret _time{};
+		std::chrono::time_point<std::chrono::steady_clock> begin = std::chrono::steady_clock::now();
+		pair.first =  f(argList...);
+		std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+		pair.second =  ret(std::chrono::duration_cast<ret>(end - begin).count());
+		return pair;
+	}
+
+	template<typename ret, typename  retFunc = void, typename ...args>
+	ret TimeFunctionReturn(std::function<void(args...)> f, args ... argList)
+	{
+		ret pair{};
+		//ret _time{};
+		std::chrono::time_point<std::chrono::steady_clock> begin = std::chrono::steady_clock::now();
+		f(argList...);
+		std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+		pair = ret(std::chrono::duration_cast<ret>(end - begin).count());
+		return pair;
+	}
 
 	template<typename ...args>
 	struct TimerFunctionContainer
@@ -90,6 +122,12 @@ namespace tinyTimer
 		void SetDestroyed(bool destroy);
 
 		void Update(std::chrono::milliseconds dt);
+
+		/*void Update(std::chrono::hours dt);
+		void Update(std::chrono::minutes dt);
+		void Update(std::chrono::seconds dt);
+		void Update(std::chrono::microseconds dt);
+		void Update(std::chrono::nanoseconds dt);*/
 
 	protected:
 		std::chrono::milliseconds m_Interval;
